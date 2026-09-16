@@ -6,8 +6,9 @@ GameLearn AI is an adaptive learning platform that teaches practical real-life s
 ## 2. Current Status
 - **Phase 1 (Core Foundation):** COMPLETED
 - **Phase 1 (Landing Experience):** COMPLETED
-- **Current Phase:** PHASE 1 COMPLETED (Ready for Phase 2)
-- **Last Updated:** 2026-09-15
+- **Phase 2 (Core Application Redesign):** COMPLETED
+- **Current Phase:** PHASE 3 PENDING (Skill Level ML) & Backend API wiring for scenario/simulation/performance flows
+- **Last Updated:** 2026-09-16
 
 ---
 
@@ -16,14 +17,14 @@ GameLearn AI is an adaptive learning platform that teaches practical real-life s
 | Phase | Description | Status |
 |---|---|---|
 | **Phase 1** | Foundation + Authentication + Innovative Landing Experience | **COMPLETED** |
-| **Phase 2** | Learner Profile + Assessment | NOT STARTED |
+| **Phase 2** | Post-Auth Core Application Redesign (Dashboard, Skills, Scenarios, Briefing, 3D Simulation, Telemetry, Results, Progress, Profile) | **COMPLETED** |
 | **Phase 3** | Skill Level ML (Random Forest) | NOT STARTED |
-| **Phase 4** | Scenario Engine + 3D Simulation (Road Safety) | NOT STARTED |
-| **Phase 5** | Behaviour Tracking | NOT STARTED |
-| **Phase 6** | Performance Scoring | NOT STARTED |
+| **Phase 4** | Scenario Engine + 3D Simulation (Road Safety) | PARTIAL (frontend UI complete; backend endpoints pending) |
+| **Phase 5** | Behaviour Tracking | PARTIAL (telemetry contracts + SDK ready; backend capture pending) |
+| **Phase 6** | Performance Scoring | PARTIAL (results UI ready; scoring engine pending) |
 | **Phase 7** | Difficulty ML (Random Forest) | NOT STARTED |
 | **Phase 8** | Complete Adaptive Feedback Loop | NOT STARTED |
-| **Phase 9** | Dashboard + Learning Analytics | NOT STARTED |
+| **Phase 9** | Dashboard + Learning Analytics | PARTIAL (frontend dashboard/progress complete; analytics backend pending) |
 | **Phase 10** | Final Integration + Optimization | NOT STARTED |
 
 ---
@@ -48,47 +49,58 @@ GameLearn AI is an adaptive learning platform that teaches practical real-life s
 - [x] Frontend TypeScript type check & production build verification (0 errors)
 - [x] Phase 1 completion report (`docs/phase-reports/phase-01-report.md`)
 - [x] Phase 1 Landing Page Enhancement report (`docs/phase-reports/phase-01-landing-page-enhancement.md`)
+- [x] Unified UI design system (Button, Card, Badge, StatCard, ProgressBar, EmptyState, ErrorState, Skeleton, PageHeader, Modal, Toast) on the glassmorphic dark aesthetic
+- [x] Application shell: AppShell + Sidebar + Topbar with protected route guard for the entire authenticated experience
+- [x] Personalized DashboardPage (stat cards, score sparkline, coach recommendation, scenario carousel, recent attempts)
+- [x] SkillsPage — complete 7-skill map with levels, progress, status, and next-action CTAs
+- [x] ScenariosPage — mission library with skill/difficulty/status filters + recommended-only toggle + `?skill=` deep links
+- [x] ScenarioBriefingPage — full briefing with backend-confirmed simulation start (attempt ID + environment config)
+- [x] Immersive 3D simulation flow — RoadCrossingSimulator + MissionPlazaSimulator (WASD + E), HUD, notifications, pause/restart/exit
+- [x] Simulation session store (`useSyncExternalStore` + `sessionStorage`) with telemetry event contracts and 3-strike danger limit
+- [x] ResultsPage — official score ring, breakdown, mistakes/tips, try again / continue learning / dashboard actions
+- [x] ProgressPage — totals, inline SVG score-over-time chart, difficulty progression, skill progress, recent attempts
+- [x] ProfilePage — account identity + live skill snapshot (no hardcoded learner data)
+- [x] Service layer with explicitly-marked dev preview fallback (`VITE_ENABLE_DEV_FALLBACK`, `DevBanner`) so backend remains source of truth
+- [x] Code-split routing + isolated Three.js vendor chunk (main bundle ~134 kB gzip)
+- [x] `frontend/.env.example` documenting API base URL and dev-fallback flags
+- [x] Phase 2 completion report (`docs/phase-reports/phase-02-core-application-redesign.md`)
 
 ## 5. Features Currently Being Implemented
-- None (Phase 1 and Landing Page Enhancement are completed; awaiting user instruction to proceed to Phase 2).
+- None actively in progress; Phase 2 (Core Application Redesign) is complete and awaiting direction for Phase 3.
 
 ## 6. Pending Features
-- Assessment System & Profiling Engine (Phase 2)
+- Backend endpoints for scenarios, simulation sessions, behaviour events, performance results, progress, dashboard/profile payloads (swap out dev preview)
 - Skill Level ML Model (Phase 3)
-- React Three Fiber 3D Road Safety Simulation (Phase 4)
-- Behaviour Tracking Telemetry (Phase 5)
-- Performance Scoring Engine (Phase 6)
 - Difficulty ML Model (Phase 7)
-- Dynamic Scenario Adaptor (Phase 8)
-- Advanced Analytics Dashboard (Phase 9)
-- Final System Hardening & Optimization (Phase 10)
+- Advanced Analytics & Adaptive Feedback Loop completion (Phases 8–10)
 
 ## 7. Files Changed
-- `frontend/src/components/landing/HeroSimulationCanvas.tsx` (NEW)
-- `frontend/src/components/landing/LaunchHero.tsx` (NEW)
-- `frontend/src/components/landing/AdaptiveJourney.tsx` (NEW)
-- `frontend/src/components/landing/AdaptiveLoop.tsx` (NEW)
-- `frontend/src/components/landing/AdaptiveComparison.tsx` (NEW)
-- `frontend/src/components/landing/SimulationShowcase.tsx` (NEW)
-- `frontend/src/components/landing/BehaviourVisualization.tsx` (NEW)
-- `frontend/src/components/landing/SkillWorlds.tsx` (NEW)
-- `frontend/src/components/landing/CTASection.tsx` (NEW)
-- `frontend/src/components/landing/LandingFooter.tsx` (NEW)
-- `frontend/src/pages/LandingPage.tsx` (MODIFIED)
-- `frontend/src/components/Navbar.tsx` (MODIFIED)
-- `frontend/src/index.css` (MODIFIED)
-- `docs/phase-reports/phase-01-landing-page-enhancement.md` (NEW)
+- `frontend/src/components/ui/*` (NEW — design-system primitives)
+- `frontend/src/components/layout/*` (NEW — AppShell, Sidebar, Topbar, AuthLayout)
+- `frontend/src/components/DevBanner.tsx` (NEW)
+- `frontend/src/components/simulation/*` (NEW — simulators, HUD, notifications, event contracts)
+- `frontend/src/components/learning/*` (NEW — ScenarioCard, LearningCoachCard)
+- `frontend/src/features/simulation/sessionStore.ts` (NEW)
+- `frontend/src/features/skills/skillCatalog.ts` (NEW)
+- `frontend/src/services/{scenario,simulation,performance,profile}Service.ts` + `utils.ts` + `fallback/devData.ts` (NEW)
+- `frontend/src/types/domain.ts`, `frontend/src/hooks/useApi.ts`, `frontend/src/lib/{cn,format,api}.ts` (NEW)
+- `frontend/src/pages/{DashboardPage,SkillsPage,ScenariosPage,ScenarioBriefingPage,SimulationPlayPage,ResultsPage,ProgressPage,ProfilePage}.tsx` (NEW)
+- `frontend/src/App.tsx` (MODIFIED — lazy route registry)
+- `frontend/src/index.css`, `frontend/tailwind.config.js`, `frontend/vite.config.ts` (MODIFIED)
+- `frontend/.env.example` (NEW)
+- `docs/phase-reports/phase-02-core-application-redesign.md` (NEW)
+- (Phase 1 landing files retained — see prior report)
 
 ## 8. Technologies Used
 - React 18, TypeScript, Vite, Tailwind CSS, Three.js, React Three Fiber, Lucide React, FastAPI, SQLAlchemy, SQLite/PostgreSQL, PyJWT, bcrypt, Pytest.
 
 ## 9. Tests Performed
-- `npm run build` passed with 0 errors.
+- `npm run build` (tsc + vite) passed with 0 errors; 2195 modules, main bundle ~134 kB gzip + isolated lazy 3D chunk.
 - `pytest -v` passed 7/7 backend tests.
-- HTTP status 200 confirmed on backend (`:8000`) and frontend (`:5173`).
 
 ## 10. Known Issues
-- None.
+- Scenario / simulation / performance / profile backend endpoints are not yet implemented; the UI runs on explicitly-marked dev preview data only when `VITE_ENABLE_DEV_FALLBACK=true` (default off in production file).
+- `three` vendor chunk (~266 kB gzip) is intentionally isolated on the simulation route.
 
 ## 11. Next Phase
-**PHASE 2 — Learner Profile + Assessment**
+**Phase 3 — Skill Level ML (Random Forest)** — and implementing the backend endpoints the current frontend already consumes (scenarios, simulation start/event/complete, performance results/progress, dashboard/profile).

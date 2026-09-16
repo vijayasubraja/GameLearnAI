@@ -4,6 +4,26 @@ All notable changes and architectural decisions are chronologically documented i
 
 ---
 
+## [Phase 2: Core Application Redesign] — 2026-09-16
+
+### Added
+- **Unified UI Design System:** reusable `ui/*` primitives (`Button`, `Card`, `Badge`, `StatCard`, `ProgressBar`, `EmptyState`, `ErrorState`, `Skeleton`, `PageHeader`, `Modal`, `Toast`) on the existing glassmorphic dark aesthetic with new `gl` tokens and utility classes.
+- **Application Shell:** `AppShell` + `Sidebar` + `Topbar` wrapping the authenticated experience behind `ProtectedRoute`, with `Outlet` dashboard context.
+- **Dashboard:** stat cards, score sparkline, Learning Coach recommendation, scenario carousel, recent attempts.
+- **Skill Map (SkillsPage):** canonical progress per domain, learner level vs scenario difficulty, status badges, next-action links into filtered missions.
+- **Mission Library (ScenariosPage):** skill/difficulty/status filters, recommended-only toggle, `?skill=` deep links.
+- **Scenario Briefing:** objective, context, learning goals, environment factors, difficulty gyroscope, controls, and a `START SIMULATION` that waits for backend confirmation.
+- **Immersive Simulation:** `RoadCrossingSimulator` + `MissionPlazaSimulator` (R3F, WASD + E controls), `SimulationHUD`, `SimulationNotifications`, session store with `sessionStorage` persistence, telemetry event contracts, 3-strike danger limit.
+- **Results:** official score ring, breakdown bars, successful actions, mistakes, improvement tips, and Back / Continue learning / Try again actions.
+- **Progress:** totals, inline SVG score-over-time chart, difficulty progression timeline, skill progress bars, recent attempts.
+- **Profile:** account identity card and live skill snapshot via profile service (identity from `/auth/me`).
+- **Service Layer + Dev Preview:** scenario/simulation/performance/profile services with `withDevFallback`; dev payloads explicitly marked with the `DEV_FALLBACK` symbol and surfaced via `DevBanner`; auth/validation failures never masked.
+- **Performance:** lazy route code-splitting for all pages + isolated `three` vendor chunk (`manualChunks`) — main bundle reduced ~278 kB → ~134 kB gzip.
+- **Config:** `frontend/.env.example` documenting `VITE_API_BASE_URL` / `VITE_ENABLE_DEV_FALLBACK`.
+- **Phase Deliverable Report:** `docs/phase-reports/phase-02-core-application-redesign.md`.
+
+---
+
 ## [Phase 1: Landing Page Enhancement] — 2026-09-15
 
 ### Added

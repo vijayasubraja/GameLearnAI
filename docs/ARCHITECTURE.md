@@ -49,9 +49,12 @@ After the first simulation, actual recorded behaviour and scored performance dri
 
 ### 4.1. Web Application (Frontend)
 - **Framework:** React 18, TypeScript, Vite
-- **Styling:** Tailwind CSS, Glassmorphic dark aesthetic, Lucide React icons
-- **State & Routing:** React Router v6, Context API for Auth and Simulation state
-- **3D Canvas:** React Three Fiber (R3F), Three.js, `@react-three/drei`
+- **Styling:** Tailwind CSS, Glassmorphic dark aesthetic, Lucide React icons, shared `ui/*` design-system primitives with `gl` design tokens
+- **Routing & Shell:** React Router v6 with lazy code-split routes; `AppShell` (Sidebar + Topbar) wrapping the authenticated experience behind `ProtectedRoute`
+- **State:** Context API for Auth; `useSyncExternalStore`-based simulation session store persisted to `sessionStorage`
+- **Service Layer:** `services/*` (scenario, simulation, performance, profile) with `withDevFallback` — while backend endpoints are pending, services return *clearly-marked* dev preview payloads (`DEV_FALLBACK` symbol, `DevBanner`) only when `VITE_ENABLE_DEV_FALLBACK=true`; auth/validation failures are never masked
+- **Simulation:** React Three Fiber (R3F), Three.js, `@react-three/drei`; `RoadCrossingSimulator` (configurable traffic/signal/lanes via `environment_config`) and `MissionPlazaSimulator`; behaviour events emitted through typed contracts (`ROAD_EVENT`, `PLAZA_EVENT`)
+- **Performance:** all feature routes lazy-loaded; Three.js vendor bundle isolated via `manualChunks` so the 3D runtime only loads on the simulation route
 
 ### 4.2. API & Backend Services (FastAPI)
 - **Authentication Service:** JWT bearer token authentication, bcrypt password hashing

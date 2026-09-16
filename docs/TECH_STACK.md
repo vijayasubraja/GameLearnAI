@@ -36,6 +36,30 @@ This document describes all technologies utilized across the platform, including
 - **Why Selected:** Declarative Three.js in React, excellent performance on integrated GPUs, WebGL-native.
 - **Alternative Considered:** Babylon.js, PlayCanvas, Unreal Pixel Streaming (too heavy for lightweight browser execution).
 
+### React Router (v6)
+- **Purpose:** Routing & Code-Splitting
+- **Where Used:** `frontend/src/App.tsx`
+- **Why Selected:** Declarative nested routes, `React.lazy` route-level code-splitting, robust route params for scenario/attempt URLs.
+- **Alternative Considered:** TanStack Router (React Router remains the ecosystem standard).
+
+### Axios
+- **Purpose:** HTTP Client with Interceptors
+- **Where Used:** `frontend/src/api/client.ts`
+- **Why Selected:** Automatic Bearer-token injection and 401 handling via interceptors; consistent typed errors via `normalizeApiError`.
+- **Alternative Considered:** fetch API (would require manual interceptor logic).
+
+### Lucide React
+- **Purpose:** Iconography
+- **Where Used:** All UI components and pages
+- **Why Selected:** Tree-shakeable, consistent stroke-weight icons matching the technical aesthetic.
+- **Alternative Considered:** Font Awesome (style mismatch), Material Icons.
+
+### useSyncExternalStore (React 18)
+- **Purpose:** Simulation Session State
+- **Where Used:** `frontend/src/features/simulation/sessionStore.ts`
+- **Why Selected:** Framework-native external-state subscription with selector-based re-renders, avoiding a state-library dependency; persisted to `sessionStorage`.
+- **Alternative Considered:** Zustand, Redux Toolkit (extra dependency for a focused, page-scoped store).
+
 ---
 
 ## 2. Backend Technologies
@@ -125,3 +149,9 @@ This document describes all technologies utilized across the platform, including
 - **Purpose:** Automated Unit & API Testing
 - **Where Used:** `backend/tests/`
 - **Why Selected:** Expressive syntax, fixtures, rich plugin ecosystem for API testing via HTTPX.
+
+---
+
+## 7. Frontend Verification
+- **TypeScript check + production build:** `npm run build` (`tsc && vite build`) — strict `noUnusedLocals`/`noUnusedParameters`, 0 errors.
+- **Bundling strategy:** all feature pages are `React.lazy` code-split; `build.rollupOptions.output.manualChunks` isolates the `three` vendor package so heavy WebGL code loads only on the simulation route.

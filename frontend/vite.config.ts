@@ -13,4 +13,15 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Isolate the heavy 3D vendor bundle so it only loads on the
+        // immersive simulation route (already lazily imported).
+        manualChunks: {
+          three: ['three', '@react-three/fiber', '@react-three/drei'],
+        },
+      },
+    },
+  },
 });

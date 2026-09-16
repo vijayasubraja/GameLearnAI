@@ -2,22 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --gl-bg: #0B0E14;
+  --gl-surface: #11151D;
+  --gl-raised: #171C26;
+  --gl-border: #1F2734;
+  --gl-border-strong: #2C3646;
+  --gl-primary: #3D7BFF;
+  --gl-primary-hover: #2E66E8;
+  --gl-primary-text: #9CB8FF;
+  --gl-success: #22C55E;
+  --gl-success-text: #6FD99A;
+  --gl-warning: #F59E0B;
+  --gl-warning-text: #FFC972;
+  --gl-danger: #EF4444;
+  --gl-danger-text: #F8A3A3;
+  --gl-ink-high: #F2F5FA;
+  --gl-ink-mid: #A6AEBD;
+  --gl-ink-low: #6B7484;
+}
+
 @layer base {
+  * {
+    border-color: var(--gl-border);
+  }
+
   body {
-    background-color: #050811;
-    color: #f1f5f9;
-    background-image: 
-      radial-gradient(circle at 50% 0%, rgba(30, 27, 75, 0.5) 0%, transparent 60%),
-      radial-gradient(circle at 100% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 0% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 40%);
+    background-color: var(--gl-bg);
+    color: var(--gl-ink-high);
+    background-image: var(--gl-radial);
     background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--gl-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--gl-primary);
+    color: #fff;
   }
 }
 
-/* Technical Simulation Grid */
+/* ------------------------------------------------------------------ */
+/* Technical backgrounds                                               */
+/* ------------------------------------------------------------------ */
+
+.bg-gl-grid {
+  background-color: var(--gl-bg);
+  background-image: var(--gl-grid);
+  background-size: 40px 40px;
+}
+
 .bg-tech-grid {
   background-size: 40px 40px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
@@ -27,7 +74,30 @@
   background-size: 24px 24px;
 }
 
-/* Glass & HUD Panels */
+/* ------------------------------------------------------------------ */
+/* Surfaces (design system + legacy compat)                            */
+/* ------------------------------------------------------------------ */
+
+.panel {
+  background-color: var(--gl-surface);
+  border: 1px solid var(--gl-border);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+}
+
+.panel-raise {
+  background-color: var(--gl-raised);
+  border: 1px solid var(--gl-border);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 32px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* Legacy glass surfaces (kept for the public landing experience) */
+.glass-card {
+  background: rgba(17, 21, 29, 0.86);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .hud-panel {
   background: rgba(10, 15, 28, 0.82);
   backdrop-filter: blur(16px);
@@ -49,7 +119,7 @@
   text-transform: uppercase;
 }
 
-/* Glowing text & accents */
+/* Glowing text & accents (legacy, kept for landing) */
 .glow-cyan {
   text-shadow: 0 0 15px rgba(6, 182, 212, 0.6), 0 0 30px rgba(6, 182, 212, 0.3);
 }
@@ -64,10 +134,7 @@
 
 /* Scanline Effect Overlay */
 .scanlines {
-  background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.25) 50%
-  );
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
   background-size: 100% 4px;
 }
 
@@ -82,16 +149,37 @@
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #050811;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #232d4b;
+  background: var(--gl-border-strong);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #4f46e5;
+  background: var(--gl-primary-hover);
+}
+
+/* HUD label — compact mono uppercase metadata */
+.label-hud {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gl-ink-low);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
