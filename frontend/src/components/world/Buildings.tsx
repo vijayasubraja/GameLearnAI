@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { WORLD_PALETTE as P } from './palette';
 import { WORLD_LOCATIONS, type BuildingKind, type WorldLocation } from './worldConfig';
 import { SpriteLabel } from './labels';
+import { LocationIcon, LocationFloorGlow } from './LocationIcons';
 
 /* ------------------------------------------------------------------ */
 /*  Building models (drawn in local space; entrance faces +z)          */
@@ -334,33 +335,61 @@ interface LocationMarkerProps {
   onSelect: (key: string) => void;
 }
 
+/** Height of the floating icon marker above the location's ground tile. */
+const ICON_BASE_Y = 3.3;
+/** Always-visible nameplate height. */
+const NAME_Y = 5.9;
+
 export const LocationMarker: React.FC<LocationMarkerProps> = ({ location, isSelected, onSelect }) => {
-  const groupRef = useRef<THREE.Group>(null);
-  const beaconRef = useRef<THREE.Mesh>(null);
-  const ringRef = useRef<THREE.Mesh>(null);
+  const rootRef = useRef<THREE.Group>(null);
+  const iconRef = useRef<THREE.Group>(null);
+  const liftRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
-  const beaconBaseY = 2.85;
+
+  // Per-location phase so nearby icons bob out of sync.
+  const phase = useMemo(() => {
+    let s = 0;
+    for (const ch of location.key) s = (s * 31 + ch.charCodeAt(0)) % 997;
+    return s;
+  }, [location.key]);
+
+  const active = hovered || isSelected;
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
-    if (groupRef.current) {
-      const targetY = hovered ? 0.22 : 0;
-      groupRef.current.position.y += (targetY - groupRef.current.position.y) * 0.18;
-    }
-    if (beaconRef.current) {
-      beaconRef.current.position.y = beaconBaseY + Math.sin(t * 1.8) * 0.14;
-    }
-    if (ringRef.current) {
-      const mat = ringRef.current.material as THREE.MeshBasicMaterial;
-      mat.opacity = 0.45 + Math.sin(t * 2.4) * 0.25;
-    }
+    const icon = iconRef.current;
+    const lift = liftRef.current;
+    const root = rootRef.current;
+    if (!icon || !lift || !root) return;
+
+    // Always turn the icon's front face toward the main camera so it can be
+    // recognisable from every orbit angle.
+    const world = new THREE.Vector3();
+    root.getWorldPosition(world);
+    icon.rotation.y = Math.atan2(state.camera.position.x - world.x, state.camera.position.z - world.z);
+
+    // Soft floating / bobbing animation.
+    const bob = Math.sin(t * 1.7 + phase) * 0.16;
+    const bobBoost = active ? 1.35 : 1;
+
+    // Gentle lift + emphasis when hovered / selected.
+    const targetY = ICON_BASE_Y + bob * bobBoost + (active ? 0.28 : 0);
+    lift.position.y += (targetY - lift.position.y) * 0.12;
+
+    // Grow slightly as the player approaches, and a bit more on hover/selection.
+    const dist = state.camera.position.distanceTo(world);
+    const prox = THREE.MathUtils.clamp(1 - (dist - 12) / 9, 0, 1);
+    const targetScale = 1 + prox * 0.16 + (active ? 0.16 : 0);
+    icon.scale.x += (targetScale - icon.scale.x) * 0.16;
+    icon.scale.y += (targetScale - icon.scale.y) * 0.16;
+    icon.scale.z += (targetScale - icon.scale.z) * 0.16;
   });
 
   return (
     <group
+      ref={rootRef}
       position={location.position}
       rotation={[0, location.rotationY, 0]}
-      ref={groupRef}
       onClick={(e) => {
         e.stopPropagation();
         onSelect(location.key);
@@ -383,25 +412,41 @@ export const LocationMarker: React.FC<LocationMarkerProps> = ({ location, isSele
 
       <BuildingModel kind={location.buildingKind} />
 
-      {/* Pulsing selection ring */}
-      <mesh ref={ringRef} position={[0, 0.1, 1.0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[1.3, 1.6, 36]} />
-        <meshBasicMaterial color={location.accent} transparent opacity={0.5} side={THREE.DoubleSide} depthTest={false} />
-      </mesh>
+      {/* Soft circular highlight on the ground under the location */}
+      <LocationFloorGlow accent={location.accent} />
 
-      {/* Beacon sphere + light pillar */}
-      <mesh ref={beaconRef} position={[0, beaconBaseY, 0.4]}>
-        <sphereGeometry args={[0.17, 14, 14]} />
-        <meshStandardMaterial color={location.accent} emissive={location.accent} emissiveIntensity={hovered || isSelected ? 1.6 : 1.0} />
-      </mesh>
-      <mesh position={[0, 2.2, 0.4]}>
-        <cylinderGeometry args={[0.3, 0.3, 1.3, 12, 1, true]} />
-        <meshBasicMaterial color={location.accent} transparent opacity={0.14} depthWrite={false} side={THREE.DoubleSide} />
-      </mesh>
+      {/* Large recognizable 3D icon, floating + bobbing above the building */}
+      <group ref={liftRef}>
+        <group ref={iconRef}>
+          <LocationIcon buildingKind={location.buildingKind} accent={location.accent} />
+        </group>
+      </group>
 
-      {(hovered || isSelected) && (
-        <SpriteLabel text={location.short} position={[0, 3.5, 0.4]} color={location.accent} scale={0.92} />
+      {/* Floating nameplate — always on, readable from the camera distance */}
+      {active ? (
+        <SpriteLabel
+          key={`label-active-${location.key}`}
+          text={location.name}
+          subtext={location.blurb}
+          position={[0, NAME_Y, 0]}
+          color={location.accent}
+          scale={1.15}
+        />
+      ) : (
+        <SpriteLabel
+          key={`label-inactive-${location.key}`}
+          text={location.short}
+          position={[0, NAME_Y, 0]}
+          color={location.accent}
+          scale={1.4}
+        />
       )}
+
+      {/* Invisible oversized hit-box so clicking near the marker is easy */}
+      <mesh position={[0, 2.5, 0.45]}>
+        <cylinderGeometry args={[2.3, 2.5, 5.2, 20]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
     </group>
   );
 };

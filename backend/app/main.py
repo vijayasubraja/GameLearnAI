@@ -1,11 +1,21 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import app.models  # Register all SQLAlchemy models on Base.metadata
 from app.api.v1.auth import router as auth_router
+from app.api.v1.scenarios import router as scenarios_router
+from app.api.v1.simulation import router as simulation_router
+from app.api.v1.performance import router as performance_router
+from app.api.v1.profile import router as profile_router
 from app.core.config import settings
-from app.db.session import Base, engine
+from app.db.session import Base, engine, SessionLocal
+from app.db.seed_scenarios import seed_scenarios
 
 # Ensure database tables are created on startup
 Base.metadata.create_all(bind=engine)
+
+# Seed scenario catalog
+with SessionLocal() as db:
+    seed_scenarios(db)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -27,6 +37,10 @@ app.add_middleware(
 
 # Mount API Routers
 app.include_router(auth_router, prefix=settings.API_V1_STR)
+app.include_router(scenarios_router, prefix=settings.API_V1_STR)
+app.include_router(simulation_router, prefix=settings.API_V1_STR)
+app.include_router(performance_router, prefix=settings.API_V1_STR)
+app.include_router(profile_router, prefix=settings.API_V1_STR)
 
 
 @app.get("/")
@@ -42,3 +56,4 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy", "service": "GameLearn AI Backend"}
+

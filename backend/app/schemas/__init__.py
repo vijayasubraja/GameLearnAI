@@ -1,4 +1,37 @@
-from app.schemas.user import UserBase, UserCreate, UserLogin, UserRead
-from app.schemas.token import Token, TokenPayload
+from app.schemas.user import UserCreate, UserLogin, UserRead, UserRead as UserResponse
+from app.schemas.token import Token, TokenData
+from app.schemas.scenario import ScenarioResponse, ScenarioFilters
+from app.schemas.simulation import (
+    SimulationStartRequest,
+    SimulationStartResponse,
+    SimulationEventPayload,
+    SimulationCompleteRequest,
+    SimulationCompleteResponse,
+)
+from app.schemas.performance import (
+    SkillInfoResponse,
+    PerformanceResultResponse,
+    ProgressHistoryResponse,
+    DashboardPayloadResponse,
+)
 
-__all__ = ["UserBase", "UserCreate", "UserLogin", "UserRead", "Token", "TokenPayload"]
+__all__ = [
+    "UserCreate",
+    "UserLogin",
+    "UserRead",
+    "UserResponse",
+    "Token",
+    "TokenData",
+    "ScenarioResponse",
+    "ScenarioFilters",
+    "SimulationStartRequest",
+    "SimulationStartResponse",
+    "SimulationEventPayload",
+    "SimulationCompleteRequest",
+    "SimulationCompleteResponse",
+    "SkillInfoResponse",
+    "PerformanceResultResponse",
+    "ProgressHistoryResponse",
+    "DashboardPayloadResponse",
+]
+

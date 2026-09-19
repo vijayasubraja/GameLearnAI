@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.db.session import Base, get_db
+import app.models  # Register all models on Base.metadata
 from app.main import app
 
 # Create in-memory SQLite database for test isolation

@@ -1,0 +1,163 @@
+from sqlalchemy.orm import Session
+from app.models.scenario import Scenario
+
+SEED_SCENARIOS = [
+    {
+        "id": "road-safety-crosswalk-01",
+        "title": "Pedestrian Crosswalk Safety",
+        "description": "Navigate a busy multi-lane street safely by checking traffic, using pedestrian signals, and crossing at designated zebra lines.",
+        "skill_category": "road_safety",
+        "skill_name": "Road Safety & Navigation",
+        "difficulty_level": "Medium",
+        "estimated_duration_minutes": 4,
+        "objective": "Cross the 2-lane road safely without triggering near-miss collisions or traffic violations.",
+        "real_world_context": "Pedestrian accidents account for thousands of urban injuries annually. Practicing scan timing and signal compliance builds essential spatial awareness.",
+        "skills_tested": ["Visual Hazard Scan", "Signal Compliance", "Traffic Distance Estimation", "Safe Crossing Speed"],
+        "controls": ["WASD / Arrows to Move", "L / R to Scan Traffic", "E to Press Crossing Signal"],
+        "success_conditions": ["Reach the destination sidewalk safely", "Perform look-scans prior to crossing"],
+        "failure_conditions": ["3 danger proximity strikes", "Crossing against red pedestrian signal"],
+        "availability": "available",
+        "is_recommended": True,
+        "environment_config": {
+            "lanes": 2,
+            "traffic_density": "medium",
+            "has_signal": True,
+            "vehicle_speed_multiplier": 1.0,
+        },
+    },
+    {
+        "id": "public-transport-bus-01",
+        "title": "Bus Stop Queue & Boarding",
+        "description": "Identify the correct route number, wait behind the safety line, and board the public transit bus calmly.",
+        "skill_category": "public_transport",
+        "skill_name": "Public Transport Mastery",
+        "difficulty_level": "Easy",
+        "estimated_duration_minutes": 3,
+        "objective": "Locate Bus #42, press E when stopped, and step inside safely.",
+        "real_world_context": "Public transit independence requires route reading, platform safety, and courteous boarding etiquette.",
+        "skills_tested": ["Route Identification", "Platform Safety Line Adherence", "Boarding Timing"],
+        "controls": ["WASD / Arrows to Walk", "E to Board Bus"],
+        "success_conditions": ["Board correct vehicle safely", "Remain behind safety boundary while waiting"],
+        "failure_conditions": ["Stepping onto roadway while bus is in motion"],
+        "availability": "available",
+        "is_recommended": False,
+        "environment_config": {
+            "bus_route": "42",
+            "wait_seconds": 10,
+        },
+    },
+    {
+        "id": "money-management-savings-01",
+        "title": "Savings Bank & Budget Deposit",
+        "description": "Visit the Savings Bank, deposit earnings into your account, and set aside funds for your weekly goal.",
+        "skill_category": "money_management",
+        "skill_name": "Savings & Financial Literacy",
+        "difficulty_level": "Easy",
+        "estimated_duration_minutes": 5,
+        "objective": "Approach the teller, deposit $50, and confirm your target balance.",
+        "real_world_context": "Building financial discipline starts with allocating earnings to savings before discretionary spending.",
+        "skills_tested": ["Deposit Calculation", "Budget Prioritization", "Bank Teller Interaction"],
+        "controls": ["WASD / Arrows to Walk", "E to Deposit Funds"],
+        "success_conditions": ["Deposit goal amount", "Confirm balance printout"],
+        "failure_conditions": ["Spending all cash at impulse vendor"],
+        "availability": "available",
+        "is_recommended": False,
+        "environment_config": {
+            "target_savings": 50,
+            "initial_cash": 75,
+        },
+    },
+    {
+        "id": "shopping-grocery-01",
+        "title": "Grocery Market Price Comparison",
+        "description": "Select items from your grocery list, compare unit prices, and stay under your budget limit.",
+        "skill_category": "shopping_transactions",
+        "skill_name": "Grocery & Shopping Skills",
+        "difficulty_level": "Medium",
+        "estimated_duration_minutes": 6,
+        "objective": "Collect 3 essential items (apples, bread, milk) while keeping total cost under $20.",
+        "real_world_context": "Smart shopping requires balancing needs vs wants and evaluating value per item.",
+        "skills_tested": ["Price Comparison", "Budget Tracking", "Change Calculation"],
+        "controls": ["WASD / Arrows to Walk", "E to Inspect Item"],
+        "success_conditions": ["Purchase all list items within budget limit"],
+        "failure_conditions": ["Exceeding maximum wallet limit"],
+        "availability": "available",
+        "is_recommended": False,
+        "environment_config": {
+            "budget": 20.0,
+            "items_required": 3,
+        },
+    },
+    {
+        "id": "communication-community-01",
+        "title": "Community Hall Inquiry",
+        "description": "Engage in constructive dialogue at the community hall, ask for directions, and active listen.",
+        "skill_category": "communication",
+        "skill_name": "Social Communication",
+        "difficulty_level": "Easy",
+        "estimated_duration_minutes": 4,
+        "objective": "Ask the information desk for schedule details using polite communication options.",
+        "real_world_context": "Effective verbal and non-verbal communication boosts confidence in community spaces.",
+        "skills_tested": ["Active Listening", "Polite Request Phrasing", "Non-verbal Cues"],
+        "controls": ["WASD / Arrows to Walk", "E to Speak"],
+        "success_conditions": ["Complete dialogue tree positively"],
+        "failure_conditions": ["Selecting rude or dismissive responses"],
+        "availability": "available",
+        "is_recommended": False,
+        "environment_config": {
+            "dialogue_nodes": 4,
+        },
+    },
+    {
+        "id": "workplace-office-01",
+        "title": "Workplace Hub Team Collaboration",
+        "description": "Attend the morning briefing at the Workplace Hub, check off assigned tasks, and submit deliverables.",
+        "skill_category": "workplace",
+        "skill_name": "Workplace & Professional Skills",
+        "difficulty_level": "Hard",
+        "estimated_duration_minutes": 7,
+        "objective": "Collect meeting documents, review action items, and deliver report to team lead.",
+        "real_world_context": "Professional environments demand time management, task prioritization, and teamwork.",
+        "skills_tested": ["Task Prioritization", "Punctuality", "Deliverable Submission"],
+        "controls": ["WASD / Arrows to Walk", "E to Interact"],
+        "success_conditions": ["Submit all deliverables before deadline"],
+        "failure_conditions": ["Missing project review meeting"],
+        "availability": "available",
+        "is_recommended": False,
+        "environment_config": {
+            "deliverables_count": 2,
+        },
+    },
+    {
+        "id": "emergency-safety-01",
+        "title": "Emergency Station First-Aid Response",
+        "description": "Locate emergency medical kits and follow safety procedures at the First Aid Station.",
+        "skill_category": "emergency_safety",
+        "skill_name": "Emergency Preparedness",
+        "difficulty_level": "Medium",
+        "estimated_duration_minutes": 5,
+        "objective": "Retrieve first-aid supplies and notify emergency response contact.",
+        "real_world_context": "Knowing how to quickly locate emergency aid and follow protocols saves lives.",
+        "skills_tested": ["Emergency Signal Identification", "Protocol Execution", "Cool-headed Decision Making"],
+        "controls": ["WASD / Arrows to Walk", "E to Access Kit"],
+        "success_conditions": ["Retrieve kit and trigger alarm signal"],
+        "failure_conditions": ["Delaying response beyond safety limit"],
+        "availability": "available",
+        "is_recommended": False,
+        "environment_config": {
+            "time_limit_seconds": 120,
+        },
+    },
+]
+
+
+def seed_scenarios(db: Session) -> None:
+    for item in SEED_SCENARIOS:
+        existing = db.query(Scenario).filter(Scenario.id == item["id"]).first()
+        if not existing:
+            scenario = Scenario(**item)
+            db.add(scenario)
+        else:
+            for k, v in item.items():
+                setattr(existing, k, v)
+    db.commit()
