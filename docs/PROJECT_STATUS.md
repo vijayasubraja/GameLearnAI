@@ -7,8 +7,8 @@ GameLearn AI is an adaptive learning platform that teaches practical real-life s
 - **Phase 1 (Core Foundation):** COMPLETED
 - **Phase 1 (Landing Experience):** COMPLETED
 - **Phase 2 (Core Application Redesign):** COMPLETED
+- **Phase 3 (Skill Level ML Model):** COMPLETED
 - **Phase 4 (Scenario Engine & Simulation Backend Wiring):** COMPLETED
-- **Current Phase:** PHASE 3 PENDING (Skill Level ML)
 - **Last Updated:** 2026-09-19
 
 ---
@@ -19,8 +19,9 @@ GameLearn AI is an adaptive learning platform that teaches practical real-life s
 |---|---|---|
 | **Phase 1** | Foundation + Authentication + Innovative Landing Experience | **COMPLETED** |
 | **Phase 2** | Post-Auth Core Application Redesign (Dashboard, Skills, Scenarios, Briefing, 3D Simulation, Telemetry, Results, Progress, Profile) | **COMPLETED** |
-| **Phase 3** | Skill Level ML (Random Forest) | NOT STARTED |
+| **Phase 3** | Skill Level ML (Random Forest) | **COMPLETED** |
 | **Phase 4** | Scenario Engine + 3D Simulation (Road Safety) | **COMPLETED** |
+
 | **Phase 5** | Behaviour Tracking | **COMPLETED** (telemetry ingestion & event persistence) |
 | **Phase 6** | Performance Scoring | **COMPLETED** (multi-factor scoring engine) |
 | **Phase 7** | Difficulty ML (Random Forest) | NOT STARTED |
@@ -65,6 +66,10 @@ GameLearn AI is an adaptive learning platform that teaches practical real-life s
 - [x] Code-split routing + isolated Three.js vendor chunk (main bundle ~134 kB gzip)
 - [x] `frontend/.env.example` documenting API base URL and dev-fallback flags
 - [x] Phase 2 completion report (`docs/phase-reports/phase-02-core-application-redesign.md`)
+- [x] Phase 3 completion report (`docs/phase-reports/phase-03-report.md`)
+- [x] Phase 4 completion report (`docs/phase-reports/phase-04-report.md`)
+
+- [x] Comprehensive run commands guide (`RUN_COMMANDS.md` & `docs/RUN_COMMANDS.md`)
 
 ## 5. Features Currently Being Implemented
 - None actively in progress; Phase 2 (Core Application Redesign) is complete and awaiting direction for Phase 3.
@@ -104,4 +109,5 @@ GameLearn AI is an adaptive learning platform that teaches practical real-life s
 - `three` vendor chunk (~266 kB gzip) is intentionally isolated on the simulation route.
 
 ## 11. Next Phase
-**Phase 3 — Skill Level ML (Random Forest)** — and implementing the backend endpoints the current frontend already consumes (scenarios, simulation start/event/complete, performance results/progress, dashboard/profile).
+**Phase 5 — Behaviour Tracking & Analytics Deepening** and **Phase 7 — Difficulty ML (Random Forest)**.
+

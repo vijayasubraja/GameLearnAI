@@ -15,6 +15,8 @@ from app.schemas.performance import (
     DashboardPayloadResponse,
 )
 
+from app.schemas.ml import SkillPredictionRequest, SkillPredictionResponse
+
 __all__ = [
     "UserCreate",
     "UserLogin",
@@ -33,5 +35,8 @@ __all__ = [
     "PerformanceResultResponse",
     "ProgressHistoryResponse",
     "DashboardPayloadResponse",
+    "SkillPredictionRequest",
+    "SkillPredictionResponse",
 ]
+
 

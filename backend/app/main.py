@@ -6,6 +6,7 @@ from app.api.v1.scenarios import router as scenarios_router
 from app.api.v1.simulation import router as simulation_router
 from app.api.v1.performance import router as performance_router
 from app.api.v1.profile import router as profile_router
+from app.api.v1.ml import router as ml_router
 from app.core.config import settings
 from app.db.session import Base, engine, SessionLocal
 from app.db.seed_scenarios import seed_scenarios
@@ -41,6 +42,8 @@ app.include_router(scenarios_router, prefix=settings.API_V1_STR)
 app.include_router(simulation_router, prefix=settings.API_V1_STR)
 app.include_router(performance_router, prefix=settings.API_V1_STR)
 app.include_router(profile_router, prefix=settings.API_V1_STR)
+app.include_router(ml_router, prefix=settings.API_V1_STR)
+
 
 
 @app.get("/")
